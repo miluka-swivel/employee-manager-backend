@@ -9,6 +9,7 @@ dotenv.config();
 const bodyParser = require('body-parser');
 const db = require('./db');
 const validateRequest = require('./validationMiddleware');
+const { ConnectThroughMongoose, getEmployees, createEmployee, updateEmployee, getEmployee, deleteEmployee } = require('./employee');
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -22,7 +23,8 @@ app.use(cors({ origin: allowed_cors_url }));
 
 async function main() {
     try {
-        const database = await db.connectToDatabase();
+        //const database = await db.connectToDatabase();
+        await ConnectThroughMongoose();
 
         // Define routes after successful database connection
         // The method get all employee details from mongo db.
@@ -53,8 +55,7 @@ async function main() {
 
         app.get('/api/employees', async (req, res) => {
             try {
-                const collection = database.collection(collectionName);
-                const data = await collection.find().toArray();
+                const data = await getEmployees();
                 res.json(data);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -101,9 +102,8 @@ async function main() {
         app.use(bodyParser.json());
         app.post('/api/employees', validateRequest, async (req, res) => {
             try {
-                const collection = database.collection(collectionName);
                 const newEmployee = req.body;
-                const result = await collection.insertOne(newEmployee);
+                const result = createEmployee(newEmployee);
                 res.json({ id: result.insertedId });
             } catch (error) {
                 console.error("Error adding employee:", error);
@@ -140,17 +140,8 @@ async function main() {
  */
         app.get('/api/employees/:id', async (req, res) => {
             try {
-                // Access the database connection
-                const database = await db.connectToDatabase();
-                const collection = database.collection(collectionName);
                 const employeeId = req.params.id.toString();
-
-                // Convert the ID to a MongoDB ObjectId
-                const objectId = new mongo.ObjectId(employeeId);
-
-                // Find the employee by ID
-                const employee = await collection.findOne({ _id: objectId });
-
+                const employee = await getEmployee(employeeId);
                 if (!employee) {
                     return res.status(404).send("Employee not found");
                 }
@@ -212,52 +203,37 @@ async function main() {
  *               message: 'Employee not found'
  */
 
-
-
         //Update the Employee
 
         app.put('/api/employees/:id', async (req, res) => {
             try {
-                // Access the database connection
-                const database = await db.connectToDatabase();
-                const collection = database.collection(collectionName); // Replace with your collection name
-
                 // Get the employee ID from the request parameter
                 const employeeId = req.params.id;
-
-                // Convert the ID to a MongoDB ObjectId
-                const objectId = new mongo.ObjectId(employeeId);
-
-                // Get the updated employee data from the request body
                 const updatedEmployee = req.body;
-
-                // Perform the update operation (using findOneAndUpdate)
-                const result = await collection.findOneAndUpdate(
-                    { _id: objectId },
-                    {
-                        $set: {
-                            firstName: updatedEmployee.firstName,
-                            lastName: updatedEmployee.lastName,
-                            email: updatedEmployee.email,
-                            phone: updatedEmployee.phone,
-                            gender: updatedEmployee.gender
-
-                        }
-                    },
-                    { returnDocument: 'after' } // Option to return updated document
-                );
-
+                const result = await updateEmployee(employeeId, updatedEmployee);
                 if (!result) {
                     return res.status(404).send("Employee not found");
                 }
-
-                // Respond with the updated employee data
                 res.json(result.value);
             } catch (error) {
                 console.error("Error updating employee:", error);
                 res.status(500).send("Error updating employee");
             }
         });
+
+        app.delete("/api/employees/:id", async (req, res) => {
+            try {
+                const employeeId = req.params.id;
+                const result = await deleteEmployee(employeeId);
+                if (!result.isSuccessful) {
+                    return res.status(404).send("Employee not found");
+                }
+            }
+            catch (error) {
+                console.error("Failed deleting employee:", error);
+                res.status(500).send("Failed deleting employee");
+            }
+        })
 
         app.listen(port, () => {
             console.log(`Server listening on port ${port}`);
