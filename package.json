@@ -4,7 +4,7 @@
   "description": "This is employee management backend for ignite assignment",
   "main": "index.js",
   "scripts": {
-    "test": "test",
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
     "start": "nodemon index.js"
   },
   "author": "Miluka De Silva",
@@ -19,5 +19,9 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "4.6.3",
     "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }

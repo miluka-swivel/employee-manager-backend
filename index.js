@@ -24,33 +24,33 @@ app.use(cors({ origin: allowed_cors_url }));
 async function main() {
     try {
         //const database = await db.connectToDatabase();
-        await ConnectThroughMongoose();
-
+        await ConnectThroughMongoose().then(console.log("Connected to MongoDB Atlas using mongoose"))
+            .catch((error) => console.error("Error connecting to MongoDB Atlas using mongoose", error));
         // Define routes after successful database connection
         // The method get all employee details from mongo db.
 
         /**
- * @swagger
- * /api/employees:
- *   get:
- *     summary: Get a list of all employees
- *     tags: [Employees]
- * 
- *     responses:
- *       200:
- *         description: Successful response
- *         content:
- *           application/json:
- *             example:
- *               data: [{}]
- *       400:
- *         description: Bad Request
- *         content:
- *          application/json:
- *            example:
- *             error:
- *              message: "Bad Request"
- */
+    * @swagger
+    * /api/employees:
+    *   get:
+    *     summary: Get a list of all employees
+    *     tags: [Employees]
+    * 
+    *     responses:
+    *       200:
+    *         description: Successful response
+    *         content:
+    *           application/json:
+    *             example:
+    *               data: [{}]
+    *       400:
+    *         description: Bad Request
+    *         content:
+    *          application/json:
+    *            example:
+    *             error:
+    *              message: "Bad Request"
+    */
         //Get All Employees
 
         app.get('/api/employees', async (req, res) => {
@@ -66,39 +66,39 @@ async function main() {
         //Express does not default have json body parser. Therefore use one.
         //The method creates employee in mongodb.
         /**
- * @swagger
- * /api/employees:
- *   post:
- *     summary: Create a new employee
- *     tags: [Employees]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               firstName:
- *                 type: string
- *               lastName:
- *                 type: string
- *               email:
- *                 type: string
- *               phone:
- *                 type: string
- *               gender:
- *                 type: string
- *           
- *     responses:
- *       201:
- *         description: Successful response
- *         content:
- *           application/json:
- *             example:
- *               data: [{}]
- *       400:
- *         description: Invalid request
- */
+    * @swagger
+    * /api/employees:
+    *   post:
+    *     summary: Create a new employee
+    *     tags: [Employees]
+    *     requestBody:
+    *       required: true
+    *       content:
+    *         application/json:
+    *           schema:
+    *             type: object
+    *             properties:
+    *               firstName:
+    *                 type: string
+    *               lastName:
+    *                 type: string
+    *               email:
+    *                 type: string
+    *               phone:
+    *                 type: string
+    *               gender:
+    *                 type: string
+    *           
+    *     responses:
+    *       201:
+    *         description: Successful response
+    *         content:
+    *           application/json:
+    *             example:
+    *               data: [{}]
+    *       400:
+    *         description: Invalid request
+    */
         app.use(bodyParser.json());
         app.post('/api/employees', validateRequest, async (req, res) => {
             try {
@@ -114,30 +114,30 @@ async function main() {
         //The method retrieve employee by given id.
         // If the given id incorrect 404 error will be returned.
         /**
- * @swagger
- * /api/employees/{id}:
- *   get:
- *     summary: Get a employee by ID
- *     tags: [Employees]
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: The _id of the employee
- *         schema:
- *           type: string
- *         example:
- *             658918e852a0131af4c0aab1
- *     responses:
- *       200:
- *         description: Successful response
- *         content:
- *           application/json:
- *             example:
- *               data: [{}]
- *       404:
- *         description: Employee not found
- */
+    * @swagger
+    * /api/employees/{id}:
+    *   get:
+    *     summary: Get a employee by ID
+    *     tags: [Employees]
+    *     parameters:
+    *       - name: id
+    *         in: path
+    *         required: true
+    *         description: The _id of the employee
+    *         schema:
+    *           type: string
+    *         example:
+    *             658918e852a0131af4c0aab1
+    *     responses:
+    *       200:
+    *         description: Successful response
+    *         content:
+    *           application/json:
+    *             example:
+    *               data: [{}]
+    *       404:
+    *         description: Employee not found
+    */
         app.get('/api/employees/:id', async (req, res) => {
             try {
                 const employeeId = req.params.id.toString();
@@ -156,52 +156,52 @@ async function main() {
         // The method updates user by the given id.
         // If the id incorrect 404 error will be returned.
         /**
- * @swagger
- * /api/employees/{id}:
- *   put:
- *     summary: Update an employee by ID
- *     tags: [Employees]
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: The unique identifier of the employee
- *         schema:
- *           type: string
- *           format: uuid  # Assuming ID is a UUID format
- *           example:
- *             658918e852a0131af4c0aab1
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               firstName:
- *                 type: string
- *               lastName:
- *                 type: string
- *               email:
- *                 type: string
- *               phone:
- *                 type: string
- *               gender:
- *                 type: string
- *     responses:
- *       200:
- *         description: Successful update
- *         content:
- *           application/json:
- *             example:
- *               message: 'Employee updated successfully'
- *       404:
- *         description: Employee not found
- *         content:
- *           application/json:
- *             example:
- *               message: 'Employee not found'
- */
+    * @swagger
+    * /api/employees/{id}:
+    *   put:
+    *     summary: Update an employee by ID
+    *     tags: [Employees]
+    *     parameters:
+    *       - name: id
+    *         in: path
+    *         required: true
+    *         description: The unique identifier of the employee
+    *         schema:
+    *           type: string
+    *           format: uuid  # Assuming ID is a UUID format
+    *           example:
+    *             658918e852a0131af4c0aab1
+    *     requestBody:
+    *       required: true
+    *       content:
+    *         application/json:
+    *           schema:
+    *             type: object
+    *             properties:
+    *               firstName:
+    *                 type: string
+    *               lastName:
+    *                 type: string
+    *               email:
+    *                 type: string
+    *               phone:
+    *                 type: string
+    *               gender:
+    *                 type: string
+    *     responses:
+    *       200:
+    *         description: Successful update
+    *         content:
+    *           application/json:
+    *             example:
+    *               message: 'Employee updated successfully'
+    *       404:
+    *         description: Employee not found
+    *         content:
+    *           application/json:
+    *             example:
+    *               message: 'Employee not found'
+    */
 
         //Update the Employee
 
@@ -221,6 +221,8 @@ async function main() {
             }
         });
 
+
+
         app.delete("/api/employees/:id", async (req, res) => {
             try {
                 const employeeId = req.params.id;
@@ -228,6 +230,7 @@ async function main() {
                 if (!result.isSuccessful) {
                     return res.status(404).send("Employee not found");
                 }
+                res.json(result.isSuccessful);
             }
             catch (error) {
                 console.error("Failed deleting employee:", error);
@@ -245,6 +248,7 @@ async function main() {
 }
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 main();
+module.exports = app; 
 
 
 

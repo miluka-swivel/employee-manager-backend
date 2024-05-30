@@ -4,14 +4,11 @@ dotenv.config();
 const MONGOURL = process.env.MONGO_URL;
 
 async function ConnectThroughMongoose() {
-    mongoose.connect(MONGOURL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    }).then(() => {
-        console.log("Connected to MongoDB Atlas using mongoose");
-    }).catch(err => {
-        console.error("Error connecting to MongoDB Atlas using mongoose", err);
-    });
+        mongoose.connect(MONGOURL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
+      
 
 }
 
@@ -33,6 +30,7 @@ const createEmployee = async (employeeData) => {
 
 // Read employee(s)
 const getEmployees = async () => {
+    console.log("Get employees called");
     const employees = await Employee.find();
     return employees;
 };
