@@ -23,12 +23,7 @@ app.use(cors({ origin: allowed_cors_url }));
 
 async function main() {
     try {
-        //const database = await db.connectToDatabase();
-        await ConnectThroughMongoose().then(console.log("Connected to MongoDB Atlas using mongoose"))
-            .catch((error) => console.error("Error connecting to MongoDB Atlas using mongoose", error));
-        // Define routes after successful database connection
-        // The method get all employee details from mongo db.
-
+        await ConnectThroughMongoose();
         /**
     * @swagger
     * /api/employees:
@@ -103,8 +98,8 @@ async function main() {
         app.post('/api/employees', validateRequest, async (req, res) => {
             try {
                 const newEmployee = req.body;
-                const result = createEmployee(newEmployee);
-                res.json({ id: result.insertedId });
+                const result = await createEmployee(newEmployee);
+                res.json(result);
             } catch (error) {
                 console.error("Error adding employee:", error);
                 res.status(500).send("Error adding employee");
@@ -205,7 +200,7 @@ async function main() {
 
         //Update the Employee
 
-        app.put('/api/employees/:id', async (req, res) => {
+        app.put('/api/employees/:id', validateRequest,  async (req, res) => {
             try {
                 // Get the employee ID from the request parameter
                 const employeeId = req.params.id;
@@ -220,8 +215,6 @@ async function main() {
                 res.status(500).send("Error updating employee");
             }
         });
-
-
 
         app.delete("/api/employees/:id", async (req, res) => {
             try {

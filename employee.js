@@ -4,11 +4,11 @@ dotenv.config();
 const MONGOURL = process.env.MONGO_URL;
 
 async function ConnectThroughMongoose() {
-        mongoose.connect(MONGOURL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-      
+    mongoose.connect(MONGOURL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
+
 
 }
 
@@ -25,12 +25,12 @@ const Employee = mongoose.model("Employee", employeeSchema);
 const createEmployee = async (employeeData) => {
     const employee = new Employee(employeeData);
     const savedEmployee = await employee.save();
-    return savedEmployee;
+    console.log(savedEmployee);
+    return savedEmployee._id;
 };
 
 // Read employee(s)
 const getEmployees = async () => {
-    console.log("Get employees called");
     const employees = await Employee.find();
     return employees;
 };
@@ -51,6 +51,7 @@ const deleteEmployee = async (employeeId) => {
 };
 
 const getEmployee = async (employeeId) => {
+    console.log("get employee called");
     return await Employee.findById(employeeId)
 }
 
