@@ -216,6 +216,34 @@ async function main() {
             }
         });
 
+        //The method deletes employee of given id.
+        // If the given id incorrect 404 error will be returned.
+        /**
+    * @swagger
+    * /api/employees/{id}:
+    *   delete:
+    *     summary: Get a employee by ID
+    *     tags: [Employees]
+    *     parameters:
+    *       - name: id
+    *         in: path
+    *         required: true
+    *         description: The _id of the employee
+    *         schema:
+    *           type: string
+    *         example:
+    *             658918e852a0131af4c0aab1
+    *     responses:
+    *       200:
+    *         description: Successful response
+    *         content:
+    *           application/json:
+    *             example:
+    *               data: [{}]
+    *       404:
+    *         description: Employee not found
+    */
+
         app.delete("/api/employees/:id", async (req, res) => {
             try {
                 const employeeId = req.params.id;
